@@ -1,0 +1,391 @@
+/* ==========================================================================
+   SAVDOGAR DAFTARI — Modern FinTech Design System
+   Modern CSS with color-scheme, light-dark(), CSS nesting, modern tokens
+   ========================================================================== */
+
+:root {
+  /* Baseline color scheme */
+  color-scheme: light dark;
+
+  /* Typography */
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, Menlo, monospace;
+
+  /* Brand & Status Colors */
+  --color-primary: #10b981;        /* Emerald Green (Trust, Prosperity) */
+  --color-primary-hover: #059669;
+  --color-primary-light: rgba(16, 185, 129, 0.12);
+  --color-primary-border: rgba(16, 185, 129, 0.28);
+  
+  --color-debt: #f43f5e;           /* Rose Red (Nasiya / Qarz) */
+  --color-debt-light: rgba(244, 63, 94, 0.12);
+  --color-debt-border: rgba(244, 63, 94, 0.25);
+
+  --color-paid: #10b981;           /* Emerald (To'langan / Kirim) */
+  --color-paid-light: rgba(16, 185, 129, 0.12);
+
+  --color-accent: #6366f1;         /* Indigo / AI Assistant */
+  --color-accent-hover: #4f46e5;
+  --color-accent-light: rgba(99, 102, 241, 0.14);
+
+  --color-warning: #f59e0b;
+  --color-warning-light: rgba(245, 158, 11, 0.12);
+
+  /* Light / Dark Mode adaptive tokens using light-dark() */
+  --bg-app: light-dark(#f8fafc, #090d16);
+  --bg-surface: light-dark(#ffffff, #111827);
+  --bg-surface-elevated: light-dark(#ffffff, #1e293b);
+  --bg-surface-subtle: light-dark(#f1f5f9, #151e2e);
+  --bg-overlay: light-dark(rgba(15, 23, 42, 0.45), rgba(0, 0, 0, 0.75));
+
+  --text-main: light-dark(#0f172a, #f8fafc);
+  --text-muted: light-dark(#64748b, #94a3b8);
+  --text-subtle: light-dark(#94a3b8, #64748b);
+
+  --border-color: light-dark(#e2e8f0, #1e293b);
+  --border-focus: light-dark(#94a3b8, #334155);
+  --border-subtle: light-dark(#f1f5f9, #1e293b);
+
+  --shadow-sm: light-dark(0 1px 2px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.4));
+  --shadow-md: light-dark(0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 4px 12px -1px rgba(0, 0, 0, 0.5));
+  --shadow-lg: light-dark(0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 10px 25px -3px rgba(0, 0, 0, 0.6));
+  --shadow-glow: 0 0 24px rgba(16, 185, 129, 0.3);
+  --shadow-glow-ai: 0 0 24px rgba(99, 102, 241, 0.35);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Specific theme overrides via <meta name="color-scheme"> as per Modern Web Guidance */
+:root {
+  &:has(> head > meta[name="color-scheme"][content="dark"]) {
+    color-scheme: dark;
+  }
+  &:has(> head > meta[name="color-scheme"][content="light"]) {
+    color-scheme: light;
+  }
+}
+
+/* Reset and Base Styles */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  min-height: 100%;
+  font-family: var(--font-sans);
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Subtle background accent glow */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 20%;
+  width: 60%;
+  height: 380px;
+  background: radial-gradient(ellipse at top, rgba(16, 185, 129, 0.08), transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: 100px;
+  right: 5%;
+  width: 400px;
+  height: 350px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.06), transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Layout container */
+.app-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 16px 20px 80px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Header & Top Bar */
+.top-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(12px);
+  position: sticky;
+  top: 12px;
+  z-index: 40;
+}
+
+.brand-section {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 22px;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+  flex-shrink: 0;
+}
+
+.brand-info h1 {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge-pro {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 7px;
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+}
+
+.shop-status-text {
+  font-size: 13px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  display: inline-block;
+  box-shadow: 0 0 6px var(--color-primary);
+}
+
+/* Header Controls */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.theme-toggle-btn, .icon-btn {
+  background: var(--bg-surface-subtle);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  font-size: 18px;
+}
+
+.theme-toggle-btn:hover, .icon-btn:hover {
+  background: var(--border-color);
+  transform: translateY(-1px);
+}
+
+.theme-toggle-btn:active, .icon-btn:active {
+  transform: translateY(0);
+}
+
+/* Primary Voice Assistant Banner / Floating Trigger */
+.voice-hero-card {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.09) 0%, rgba(16, 185, 129, 0.07) 100%);
+  border: 1px solid rgba(99, 102, 241, 0.22);
+  border-radius: var(--radius-xl);
+  padding: 24px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+.voice-hero-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 260px;
+  height: 260px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.voice-hero-content {
+  max-width: 650px;
+}
+
+.voice-hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-accent);
+  background: var(--bg-surface);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  margin-bottom: 10px;
+}
+
+.voice-hero-title {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+
+.voice-hero-desc {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.voice-hero-cta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.btn-record {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 26px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(99, 102, 241, 0.4);
+  transition: var(--transition-bounce);
+  position: relative;
+}
+
+.btn-record:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.5);
+}
+
+.btn-record:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.btn-record .mic-pulse {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse-ring 2s infinite;
+}
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+}
+
+/* Navigation Tabs */
+.nav-tabs {
+  display: flex;
+  gap: 8px;
+  background: var(--bg-surface-subtle);
+  padding: 6px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  width: fit-content;
+}
+
+.tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.tab-btn:hover {
+  color: var(--text-main);
+}
+
+.tab-btn.active {
+  background: var(--bg-surface);
+  color: var(--text-main);
+  box-shadow: var(--shadow-sm);
+}
+
+.tab-badge {
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  background: var(--bg-surface-subtle);
+  color: var(--text-muted);
+}
+
+.tab-btn.active .tab-badge {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}

@@ -1,0 +1,54 @@
+{
+  "merchant": {
+    "name": "Mening Do'konim",
+    "shopName": "Do'kon / Rasta",
+    "phone": ""
+  },
+  "customers": [
+    {
+      "id": "cust_yangiz",
+      "id5": "68129",
+      "name": "yangiz",
+      "phone": "",
+      "note": "",
+      "photo": "",
+      "createdAt": "2026-10-22T17:16:00.000Z",
+      "transactions": [
+        {
+          "id": "tx_yangiz_1",
+          "type": "DEBT",
+          "amount": 2222,
+          "description": "Nasiya",
+          "isPaid": false,
+          "date": "2026-10-22T17:16:00.000Z"
+        }
+      ]
+    }
+  ],
+  "messages": [
+    {
+      "id": "msg_1792691357107",
+      "chatId": 7290313985,
+      "customerId": null,
+      "customerId5": "",
+      "customerName": "𝖙𝖍𝖊 𝖇𝖔𝖞 𝖎𝖓 𝖉𝖆𝖗𝖐",
+      "customerPhone": "",
+      "content": "salom",
+      "type": "text",
+      "date": "2026-10-22T17:49:17.107Z",
+      "delivered": true
+    },
+    {
+      "id": "msg_1792688746818",
+      "chatId": 7290313985,
+      "customerId": "cust_yangiz",
+      "customerId5": "68129",
+      "customerName": "yangiz",
+      "customerPhone": "",
+      "content": "salom qarzimni ertya beraman",
+      "type": "text",
+      "date": "2026-10-22T17:05:46.818Z",
+      "delivered": true
+    }
+  ]
+}

@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Savdogar Daftari — Ovozli Nasiya va Qarz Boshqaruvi</title>
+  
+  <!-- Modern Web Guidance: Native color-scheme & FOUC Prevention Script -->
+  <meta name="color-scheme" content="light dark">
+  <script>
+    document.querySelector('meta[name="color-scheme"]').content = localStorage.getItem("color-scheme") ?? "light dark";
+  </script>
+
+  <!-- PWA & Mobile Meta -->
+  <meta name="theme-color" content="#10b981">
+  <meta name="description" content="O'zbekiston do'kondorlari va mijozlari uchun ovozli qarz va nasiya daftari.">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- ==============================================================
+         1. CUSTOMER PORTAL (MIJOZLAR UCHUN ASOSIY OYNA)
+         ID kiritilmaguncha hech qanday hisob-kitob ko'rinmaydi!
+    ============================================================== -->
+    <div id="portal-customer" class="customer-portal-view">
+      
+      <!-- Customer Portal Top Bar -->
+      <header class="top-header" role="banner" style="justify-content: space-between;">
+        <div class="brand-section">
+          <div class="brand-logo" aria-hidden="true">📖</div>
+          <div class="brand-info">
+            <h1>
+              Savdogar Daftari
+              <span class="badge-pro">Mijoz Portali</span>
+            </h1>
+            <div class="shop-status-text">
+              <span class="status-dot"></span>
+              <span id="custPortalShopName">Chilonzor Bozor, 14-do'kon</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <button class="theme-toggle-btn" id="custPortalThemeBtn" title="Rejimni o'zgartirish" aria-label="Rang sxemasi">
+            🌓
+          </button>
+          <button class="btn btn-secondary" id="btnOpenAdminLogin" style="gap: 6px; font-weight: 700; border-color: var(--color-accent); color: var(--color-accent);">
+            <span>🔐</span>
+            <span>Admin Kabineti</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Customer Portal ID Verification Hero -->
+      <section class="portal-hero-card">
+        <div class="voice-hero-tag">
+          <span>🛡️</span>
+          <span>Shaxsiy Hisob-Kitob</span>
+        </div>
+        <h2>Qarz va Nasiya Hisobingizni Tekshiring</h2>
+        <p>
+          Do'kondor sizga bergan <strong>5 xonali ID raqamingizni</strong> kiriting. 
+          ID kiritilmasdan begona ma'lumotlar ko'rinmaydi (100% maxfiylik).
+        </p>
+
+        <form id="formCustPortalSearch" class="id-search-form" autocomplete="off">
+          <span>🔍</span>
+          <input type="text" id="custPortalIdInput" maxlength="5" placeholder="5 xonali ID (masalan: 58219)" inputmode="numeric" required>
+          <button type="submit" class="btn btn-primary" style="padding: 10px 24px; border-radius: var(--radius-full);">
+            Tekshirish
+          </button>
+        </form>
+
+        <div style="margin-top: 14px; font-size: 13px; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
+          <span>🤖 Telegram botimiz:</span>
+          <a href="https://t.me/qarzingnikor_bot" target="_blank" rel="noopener noreferrer" style="color: #229ED9; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; background: rgba(34, 158, 217, 0.1); padding: 4px 10px; border-radius: var(--radius-full); border: 1px solid rgba(34, 158, 217, 0.25);">
+            <span>✈️</span> @qarzingnikor_bot
+          </a>
+          <span>orqali ham tekshirishingiz mumkin</span>
+        </div>
+      </section>
+
+      <!-- STATE A: Empty / Not Searched Yet Prompt -->
+      <div id="portalCustEmptyState" class="portal-empty-card">
+        <div class="empty-state-icon">🔒</div>
+        <h3 style="font-size: 18px; font-weight: 700;">Hisob-kitoblar himoyalangan</h3>
+        <p style="color: var(--text-muted); font-size: 14px; max-width: 440px;">
+          Do'kondor bergan 5 xonali ID raqamingizni yuqoridagi maydonga kiriting va "Tekshirish" tugmasini bosing.
+        </p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; width: 100%; margin-top: 14px;">
+          <div style="background: var(--bg-surface-subtle); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color); text-align: left;">
+            <div style="font-size: 18px; margin-bottom: 4px;">🔎</div>
+            <strong>O'z hisobingiz</strong>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Faqat o'zingizga tegishli qoldiq qarzni ko'rasiz.</p>
+          </div>
+          <div style="background: var(--bg-surface-subtle); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color); text-align: left;">
+            <div style="font-size: 18px; margin-bottom: 4px;">🧾</div>
+            <strong>To'lovlar tarixi</strong>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Qaysi kuni qancha pul to'laganingiz qayd etilgan.</p>
+          </div>
+          <div style="background: var(--bg-surface-subtle); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color); text-align: left;">
+            <div style="font-size: 18px; margin-bottom: 4px;">📞</div>
+            <strong>Bog'lanish</strong>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Do'kondor bilan 1 bosishda hisob-kitob qiling.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- STATE B: Customer Found Result View -->
+      <div id="portalCustResultState" class="portal-result-card" style="display: none;">
+        <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 16px; flex-wrap: wrap; gap: 14px;">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <div id="custPortalAvatarContainer">
+              <!-- Rendered as img or avatar initials -->
+            </div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <h3 id="custPortalName" style="font-size: 20px; font-weight: 800;">Alisher aka</h3>
+                <span class="badge-id" id="custPortalIdBadge">#58219</span>
+              </div>
+              <div id="custPortalPhone" style="font-size: 13px; color: var(--text-muted); margin-top: 2px;">+998...</div>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span id="custPortalStatusBadge" class="debt-badge unpaid">Qarzdor</span>
+            <button class="btn btn-secondary" id="btnCustPortalReset" style="font-size: 12px; padding: 6px 12px;">
+              ✕ Yopish
+            </button>
+          </div>
+        </div>
+
+        <!-- 3 Financial Metrics -->
+        <div class="metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+          <div class="metric-card" style="padding: 16px;">
+            <span class="metric-title">Jami Olingan Nasiya</span>
+            <div class="metric-value" style="font-size: 20px;">
+              <span id="custPortalTotalDebt">0</span>
+              <span class="currency-symbol">so'm</span>
+            </div>
+          </div>
+          <div class="metric-card" style="padding: 16px;">
+            <span class="metric-title">Qaytarilgan To'lov</span>
+            <div class="metric-value" style="font-size: 20px; color: var(--color-paid);">
+              <span id="custPortalTotalPaid">0</span>
+              <span class="currency-symbol">so'm</span>
+            </div>
+          </div>
+          <div class="metric-card" style="padding: 16px; border: 2px solid var(--border-color);">
+            <span class="metric-title">Hozirgi Qoldiq Qarz</span>
+            <div class="metric-value" style="font-size: 22px; color: var(--color-debt);">
+              <span id="custPortalBalance">0</span>
+              <span class="currency-symbol">so'm</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Customer Ledger Timeline -->
+        <div>
+          <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+            <span>📜</span> Hisob-kitoblar Tarixi
+          </h4>
+          <div id="custPortalTimeline" class="ledger-timeline">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Quick Client Actions -->
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; border-top: 1px solid var(--border-color); padding-top: 16px;">
+          <a id="btnCustPortalTelegramChat" href="https://t.me/qarzingnikor_bot" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="flex: 1; background: #229ED9; border-color: #229ED9; text-decoration: none; justify-content: center; min-width: 200px;">
+            ✈️ Do'kondorga Telegramda Xabar Yozish
+          </a>
+          <button class="btn btn-secondary" id="btnCustPortalPrint" style="flex: 1; min-width: 160px;">
+            🖨️ Kvitansiya (PDF)
+          </button>
+          <button class="btn btn-secondary" id="btnCustPortalContactShop" style="flex: 1; min-width: 160px;">
+            📞 Telefon Qilish
+          </button>
+        </div>
+      </div>
+
+      <!-- STATE C: Customer Not Found Alert -->
+      <div id="portalCustNotFoundState" class="portal-empty-card" style="display: none; border-color: var(--color-debt-border);">
+        <div class="empty-state-icon" style="background: var(--color-debt-light); color: var(--color-debt);">⚠️</div>
+        <h3 style="font-size: 18px; font-weight: 700; color: var(--color-debt);">Mijoz topilmadi</h3>
+        <p id="portalCustNotFoundMsg" style="color: var(--text-muted); font-size: 14px; max-width: 440px;">
+          Kiritilgan 5 xonali ID raqami bo'yicha hech qanday mijoz topilmadi.
+        </p>
+      </div>
+
+    </div><!-- /#portal-customer -->
+
+
+    <!-- ==============================================================
+         2. ADMIN PANEL (SAVDOGAR BOSHQARUV PANELI)
+         Faqat 08092010 PIN kodi kiritilgandan keyin ochiladi!
+    ============================================================== -->
+    <div id="portal-admin" style="display: none; flex-direction: column; gap: 24px; width: 100%;">
+
+      <!-- Admin Top Header -->
+      <header class="top-header" role="banner">
+        <div class="brand-section">
+          <div class="brand-logo" aria-hidden="true">📖</div>
+          <div class="brand-info">
+            <h1>
+              Savdogar Daftari
+              <span class="badge-pro" style="background: var(--color-debt-light); color: var(--color-debt); border-color: var(--color-debt-border);">ADMIN</span>
+            </h1>
+            <div class="shop-status-text">
+              <span class="status-dot"></span>
+              <span id="headerShopName">Chilonzor Bozor, 14-do'kon</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs (Desktop / Tablet) -->
+        <nav class="nav-tabs" role="tablist" aria-label="Asosiy bo'limlar">
+          <button class="tab-btn active" data-tab="ledger" role="tab" aria-selected="true">
+            👥 Mijozlar & Qarzlar
+            <span class="tab-badge" id="tabCustomerBadge">0</span>
+          </button>
+          <button class="tab-btn" data-tab="messages" role="tab" aria-selected="false">
+            📩 Xabarlar
+            <span class="tab-badge" id="tabMessagesBadge" style="background: var(--color-accent); display: none;">0</span>
+          </button>
+          <button class="tab-btn" data-tab="analytics" role="tab" aria-selected="false">
+            📊 Xulosa & Hisobot
+          </button>
+          <button class="tab-btn" data-tab="settings" role="tab" aria-selected="false">
+            🏪 Do'kon & Sozlamalar
+          </button>
+        </nav>
+
+        <div class="header-actions">
+          <button class="icon-btn" id="soundToggleBtn" title="Ovozlarni yoqish/o'chirish" aria-label="Ovoz sozlamasi">
+            🔔
+          </button>
+          <button class="theme-toggle-btn" id="themeToggleBtn" title="Rejimni o'zgartirish" aria-label="Rang sxemasi">
+            🌓
+          </button>
+          <button class="btn btn-secondary" id="btnAdminLogout" style="font-weight: 700; font-size: 12px; padding: 8px 12px;" title="Mijoz oynasiga qaytish">
+            🚪 Mijoz Oynasiga Chiqish
+          </button>
+          <button class="btn btn-primary" id="btnOpenVoice" style="gap: 8px;">
+            <span>🎙️</span>
+            <span>Ovozli yozish</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Voice AI Hero Callout -->
+      <section class="voice-hero-card" aria-label="Ovozli tezkor kiritish">
+        <div class="voice-hero-content">
+          <div class="voice-hero-tag">
+            <span>✨</span>
+            <span>Ovozli Sun'iy Intellekt</span>
+          </div>
+          <h2 class="voice-hero-title">Yozmang, shunchaki gapiring!</h2>
+          <p class="voice-hero-desc">
+            Masalan: <em>"Alisher aka bugun 150 ming so'm nasiya oldi"</em> yoki <em>"58219 ga 80 000 so'm qarz yozing"</em> deng. 
+            Tizim ismni, summani va amalni bir zumda ajratib, sizdan tasdiqlashni so'raydi.
+          </p>
+        </div>
+        <div class="voice-hero-cta">
+          <button class="btn-record" id="btnVoiceHeroRecord">
+            <div class="mic-pulse">🎙️</div>
+            <span>Mikrofonni bosib gapiring</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- TAB 1: Ledger & Customers View -->
+      <main id="view-ledger" class="app-view" role="tabpanel">
+        <!-- 4 Key FinTech Metrics -->
+        <section class="metrics-grid" aria-label="Moliyaviy ko'rsatkichlar">
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title">Jami Nasiya (Kutilayotgan)</span>
+              <div class="metric-icon icon-debt">🔴</div>
+            </div>
+            <div class="metric-value">
+              <span id="metricTotalDebt">0</span>
+              <span class="currency-symbol">so'm</span>
+            </div>
+            <div class="metric-footer">
+              <span>Mijozlardan qaytishi kerak bo'lgan pul</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title">Bugungi Nasiya</span>
+              <div class="metric-icon icon-today">📦</div>
+            </div>
+            <div class="metric-value">
+              <span id="metricTodayDebt">0</span>
+              <span class="currency-symbol">so'm</span>
+            </div>
+            <div class="metric-footer">
+              <span>Bugun berilgan qarz mahsulotlar</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title">Bugun Qaytgan Pul</span>
+              <div class="metric-icon icon-paid">💵</div>
+            </div>
+            <div class="metric-value">
+              <span id="metricTodayPaid">0</span>
+              <span class="currency-symbol">so'm</span>
+            </div>
+            <div class="metric-footer">
+              <span>Bugun kassaga tushgan to'lovlar</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title">Qarzdor Mijozlar</span>
+              <div class="metric-icon icon-customers">👥</div>
+            </div>
+            <div class="metric-value">
+              <span id="metricDebtorsCount">0</span>
+              <span class="currency-symbol">ta odam</span>
+            </div>
+            <div class="metric-footer">
+              <span>Aktiv qarz daftardagi shaxslar</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Customer Directory Toolbar -->
+        <section class="toolbar-section" style="margin-top: 24px;">
+          <div class="search-box">
+            <span>🔍</span>
+            <input type="text" id="customerSearchInput" placeholder="Ism, telefon yoki 5 xonali ID (masalan: 58219)..." aria-label="Mijoz qidirish">
+          </div>
+
+          <div class="filter-group">
+            <button class="filter-chip active" data-filter="all">Hammasi</button>
+            <button class="filter-chip" data-filter="debtors">Faqat qarzdorlar</button>
+            <button class="filter-chip" data-filter="settled">To'liq to'laganlar</button>
+            <button class="filter-chip" data-filter="top_debt">Eng ko'p qarzlar</button>
+          </div>
+
+          <div class="toolbar-actions">
+            <button class="btn btn-secondary" id="btnExportExcel" title="Excel formatda yuklab olish">
+              📥 Excel
+            </button>
+            <button class="btn btn-secondary" id="btnPrintReport" title="Chop etish">
+              🖨️ Chop etish
+            </button>
+            <button class="btn btn-primary" id="btnAddNewCustomer">
+              ➕ Yangi Mijoz
+            </button>
+          </div>
+        </section>
+
+        <!-- Customer Cards Grid -->
+        <section id="customerListContainer" class="customers-container" style="margin-top: 20px;" aria-label="Mijozlar ro'yxati">
+          <!-- Rendered by JavaScript -->
+        </section>
+      </main>
+
+      <!-- TAB 2: Analytics & Reports View -->
+      <section id="view-analytics" class="app-view" style="display: none;" role="tabpanel">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
+          
+          <!-- 7-Day Dynamic Chart Card -->
+          <div class="chart-container">
+            <div class="chart-header">
+              <div>
+                <h3 style="font-size: 16px; font-weight: 700;">Haftalik Dinamika (Oxirgi 7 kun)</h3>
+                <p style="color: var(--text-muted); font-size: 13px;">Berilgan nasiya va qaytgan to'lovlar taqqosi</p>
+              </div>
+              <div class="chart-legend">
+                <div class="legend-item">
+                  <span class="legend-dot dot-debt"></span>
+                  <span>Nasiya</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-dot dot-paid"></span>
+                  <span>To'lov</span>
+                </div>
+              </div>
+            </div>
+
+            <div style="width: 100%; height: 200px; display: flex; align-items: center; justify-content: center;">
+              <svg id="analyticsSvgChart" viewBox="0 0 600 180" style="width: 100%; height: 100%;"></svg>
+            </div>
+          </div>
+
+          <!-- Top 5 Debtors Card -->
+          <div class="chart-container">
+            <div class="chart-header">
+              <div>
+                <h3 style="font-size: 16px; font-weight: 700;">Eng Katta 5 ta Qarzdor</h3>
+                <p style="color: var(--text-muted); font-size: 13px;">Birinchi navbatda eslatilishi kerak bo'lganlar</p>
+              </div>
+            </div>
+            <div id="analyticsTopDebtors" style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- TAB 3: Settings & Shop View -->
+      <section id="view-settings" class="app-view" style="display: none;" role="tabpanel">
+        <div style="max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
+          <div class="metric-card">
+            <h3 style="font-size: 18px; font-weight: 700;">Do'kon va Savdogar Sozlamalari</h3>
+            <p style="color: var(--text-muted); font-size: 13px;">Ushbu ma'lumotlar mijozlarga jo'natiladigan eslatmalarda ko'rinadi.</p>
+
+            <form id="formSettings" style="display: flex; flex-direction: column; gap: 14px; margin-top: 10px;">
+              <div class="form-group">
+                <label class="form-label" for="settingsShopName">Do'kon nomi / Bozor rastasi</label>
+                <input type="text" id="settingsShopName" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="settingsOwnerName">Savdogar Ismi</label>
+                <input type="text" id="settingsOwnerName" class="form-input" required>
+              </div>
+              <button type="submit" class="btn btn-primary" style="align-self: flex-start;">
+                💾 Saqlash
+              </button>
+            </form>
+          </div>
+
+          <div class="metric-card">
+            <h3 style="font-size: 18px; font-weight: 700;">Ma'lumotlar Xavfsizligi</h3>
+            <p style="color: var(--text-muted); font-size: 13px;">Admin PIN-kodi: <strong>08092010</strong>. Barcha ma'lumotlar faqat sizning qurilmangizda xavfsiz saqlanadi.</p>
+            <div style="display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap;">
+              <button class="btn btn-secondary" onclick="window.ExportManager.exportToCSV()">
+                📤 Zaxira nusxa (Excel)
+              </button>
+              <button class="btn btn-danger" id="btnResetData">
+                🔄 Daftarni tozalash (Bo'sh holat)
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: Telegram Bots & Customer Messages View -->
+      <section id="view-messages" class="app-view" style="display: none;" role="tabpanel">
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+
+          <!-- Telegram Bots Connectivity Status Grid -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
+            
+            <!-- Bot 1 Card: Customer Bot -->
+            <div class="metric-card" style="border: 2px solid #229ED9;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span style="font-size: 28px;">🤖</span>
+                  <div>
+                    <h3 style="font-size: 16px; font-weight: 800; margin: 0;">Mijozlar Telegram Boti</h3>
+                    <span style="font-size: 12px; color: #229ED9; font-weight: 700;">@qarzingnikor_bot</span>
+                  </div>
+                </div>
+                <span class="badge-pro" style="background: rgba(34, 158, 217, 0.15); color: #229ED9; border-color: rgba(34, 158, 217, 0.3);">FAOL</span>
+              </div>
+              <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 14px;">
+                Mijozlaringiz bu botga kirib, 5 xonali ID sini kiritib qarzini bilishadi va sizga to'g'ridan-to'g'ri xabar yozishadi.
+              </p>
+              <div style="display: flex; gap: 8px;">
+                <a href="https://t.me/qarzingnikor_bot" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="flex: 1; background: #229ED9; border-color: #229ED9; text-decoration: none; justify-content: center; font-size: 13px;">
+                  ✈️ Botni Ochish
+                </a>
+              </div>
+            </div>
+
+            <!-- Bot 2 Card: Merchant Notification Bot -->
+            <div class="metric-card" style="border: 2px solid var(--color-accent);">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span style="font-size: 28px;">👑</span>
+                  <div>
+                    <h3 style="font-size: 16px; font-weight: 800; margin: 0;">Do'kondor Admin Boti</h3>
+                    <span style="font-size: 12px; color: var(--color-accent); font-weight: 700;">@xabarqarz_bot</span>
+                  </div>
+                </div>
+                <span class="badge-pro" style="background: var(--color-accent-light); color: var(--color-accent); border-color: var(--color-accent-border);">FAOL</span>
+              </div>
+              <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 14px;">
+                Sizning shaxsiy xabarnoma botingiz (ID: <code>7290313985</code>). Mijozlar yozgan barcha xabarlar, ovozlar va rasmlar shu yerga keladi!
+              </p>
+              <div style="display: flex; gap: 8px;">
+                <a href="https://t.me/xabarqarz_bot" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="flex: 1; text-decoration: none; justify-content: center; font-size: 13px;">
+                  💬 Admin Botni Ochish
+                </a>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Customer Messages Feed Header -->
+          <div class="chart-container">
+            <div class="chart-header" style="flex-wrap: wrap; gap: 10px;">
+              <div>
+                <h3 style="font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+                  <span>📩</span> Mijozlardan Kelgan Xabarlar
+                </h3>
+                <p style="color: var(--text-muted); font-size: 13px;">
+                  @qarzingnikor_bot orqali mijozlar yuborgan murojaatlar va eslatmalar
+                </p>
+              </div>
+              <button class="btn btn-secondary" id="btnRefreshMessages" style="font-size: 12px; padding: 6px 14px; gap: 6px;">
+                🔄 Yangilash
+              </button>
+            </div>
+
+            <!-- Messages List Container -->
+            <div id="telegramMessagesList" style="display: flex; flex-direction: column; gap: 12px; margin-top: 14px;">
+              <!-- Rendered by JavaScript -->
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Mobile Bottom Navigation Bar -->
+      <nav class="mobile-bottom-bar" aria-label="Mobil navigatsiya">
+        <button class="mobile-nav-item active" data-tab="ledger">
+          <span class="mobile-nav-icon">👥</span>
+          <span>Mijozlar</span>
+        </button>
+        
+        <button class="mobile-nav-item" data-tab="messages">
+          <span class="mobile-nav-icon">📩</span>
+          <span>Xabarlar</span>
+        </button>
+
+        <button class="mobile-float-mic" id="btnMobileMic" aria-label="Ovozli kiritish">
+          🎙️
+        </button>
+
+        <button class="mobile-nav-item" data-tab="analytics">
+          <span class="mobile-nav-icon">📊</span>
+          <span>Hisobot</span>
+        </button>
+        <button class="mobile-nav-item" data-tab="settings">
+          <span class="mobile-nav-icon">🏪</span>
+          <span>Do'kon</span>
+        </button>
+      </nav>
+
+    </div><!-- /#portal-admin -->
+
+  </div><!-- /.app-container -->
+
+  <!-- ==============================================================
+       3. CUSTOMER DETAIL DRAWER (ADMIN UCHUN SHAXSIY DAFTAR)
+  ============================================================== -->
+  <div class="customer-sheet-overlay" id="customerSheetOverlay" aria-hidden="true"></div>
+  <aside class="customer-sheet" id="customerSheet" role="dialog" aria-modal="true" aria-labelledby="sheetCustName">
+    <div class="sheet-header">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div id="sheetCustAvatarContainer">
+          <!-- Photo or avatar initials -->
+        </div>
+        <div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <h2 id="sheetCustName" style="font-size: 18px; font-weight: 700;">Mijoz Tafsiloti</h2>
+            <span class="badge-id" id="sheetCustId5">#58219</span>
+          </div>
+          <div id="sheetCustPhone" style="font-size: 13px; color: var(--text-muted);">+998...</div>
+        </div>
+      </div>
+      <button class="btn-close" id="btnCloseSheet" aria-label="Yopish">✕</button>
+    </div>
+
+    <div class="sheet-body">
+      <!-- 3-Part Financial Balance Banner -->
+      <div class="customer-card-stats" style="margin-bottom: 8px; padding: 14px;">
+        <div class="customer-stat-col">
+          <span>🔴 Jami Nasiya:</span>
+          <strong id="sheetCustTotalDebt" class="stat-val-debt">0 so'm</strong>
+        </div>
+        <div class="customer-stat-col">
+          <span>🟢 Qaytgan Pul:</span>
+          <strong id="sheetCustTotalPaid" class="stat-val-paid">0 so'm</strong>
+        </div>
+        <div class="customer-stat-col">
+          <span>⚖️ Qoldiq Qarz:</span>
+          <strong id="sheetCustBalance" class="stat-val-bal">0 so'm</strong>
+        </div>
+      </div>
+
+      <!-- Action Buttons Row -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+        <button class="btn btn-danger" id="btnSheetAddNasiya" style="padding: 10px 14px; font-size: 13px;">
+          🔴 + Nasiya Yozish
+        </button>
+        <button class="btn btn-primary" id="btnSheetAddPayment" style="padding: 10px 14px; font-size: 13px;">
+          🟢 - To'lov Qabul Qilish
+        </button>
+      </div>
+
+      <!-- Quick Settle Full Debt Button -->
+      <button class="btn btn-secondary" id="btnSheetSettleFull" style="width: 100%; margin-bottom: 12px; font-size: 13px; font-weight: 700; color: var(--color-paid); border-color: var(--color-primary-border);">
+        ✅ Barcha qarzni "To'liq to'landi" deb yozish
+      </button>
+
+      <!-- Customer Photo Action in Drawer -->
+      <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+        <button type="button" class="btn btn-secondary" id="btnDrawerUpdatePhoto" style="width: 100%; font-size: 12px; padding: 8px;">
+          📷 Mijoz Suratini Yangilash (Kamera / Fayl)
+        </button>
+      </div>
+
+      <!-- Gentle Reminder Generator (O'zbekona yumshoq eslatma) -->
+      <div class="reminder-generator-box">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <strong style="font-size: 13px; color: var(--color-accent); display: flex; align-items: center; gap: 6px;">
+            <span>💬</span> O'zbekona Odobli Eslatma
+          </strong>
+        </div>
+
+        <div class="reminder-tabs">
+          <button class="reminder-tab-chip active" data-type="friendly">Do'stona / Yumshoq</button>
+          <button class="reminder-tab-chip" data-type="formal">Rasmiy</button>
+          <button class="reminder-tab-chip" data-type="monthEnd">Oy yakuni</button>
+        </div>
+
+        <div class="reminder-preview-text" id="reminderTextPreview">
+          Assalomu alaykum...
+        </div>
+
+        <div class="reminder-actions">
+          <button class="btn btn-secondary" id="btnReminderTelegram" style="flex: 1; font-size: 12px; padding: 8px;">
+            📲 Telegram
+          </button>
+          <button class="btn btn-secondary" id="btnReminderSMS" style="flex: 1; font-size: 12px; padding: 8px;">
+            💬 SMS
+          </button>
+          <button class="btn btn-secondary" id="btnReminderCopy" style="font-size: 12px; padding: 8px 12px;" title="Nusxalash">
+            📋 Nusxa
+          </button>
+        </div>
+      </div>
+
+      <!-- Ledger Transactions Timeline -->
+      <div>
+        <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 12px;">Hisob-kitob Daftari Tarixi</h4>
+        <div id="ledgerTimeline" class="ledger-timeline">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Delete Customer Action -->
+      <div style="margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--border-color);">
+        <button class="btn btn-danger" id="btnDeleteCustomer" style="width: 100%; font-size: 13px; padding: 10px; gap: 8px;">
+          🗑️ Ushbu mijozni daftardan butunlay o'chirish
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ==============================================================
+       4. MODALS (DIALOGS)
+  ============================================================== -->
+
+  <!-- MODAL A: ADMIN PIN SECURITY DIALOG (08092010) -->
+  <dialog id="adminPinModal" closedby="any" aria-labelledby="adminPinModalTitle">
+    <div class="modal-content" style="max-width: 380px;">
+      <div class="modal-header">
+        <h3 id="adminPinModalTitle" class="modal-title">🔐 Admin Kabinetiga Kirish</h3>
+        <button class="btn-close" id="btnClosePinModal" aria-label="Yopish">✕</button>
+      </div>
+
+      <div class="pin-dialog-body" id="pinDialogBody">
+        <p style="font-size: 13px; color: var(--text-muted); text-align: center;">
+          Boshqaruv paneliga kirish uchun 8 xonali maxfiy PIN kodni kiriting:
+        </p>
+
+        <input type="password" id="adminPinInput" class="pin-display-box" maxlength="8" placeholder="••••••••" readonly>
+
+        <div class="pin-keypad">
+          <button type="button" class="pin-btn" data-key="1">1</button>
+          <button type="button" class="pin-btn" data-key="2">2</button>
+          <button type="button" class="pin-btn" data-key="3">3</button>
+          <button type="button" class="pin-btn" data-key="4">4</button>
+          <button type="button" class="pin-btn" data-key="5">5</button>
+          <button type="button" class="pin-btn" data-key="6">6</button>
+          <button type="button" class="pin-btn" data-key="7">7</button>
+          <button type="button" class="pin-btn" data-key="8">8</button>
+          <button type="button" class="pin-btn" data-key="9">9</button>
+          <button type="button" class="pin-btn pin-btn-action" id="btnPinClear">C</button>
+          <button type="button" class="pin-btn" data-key="0">0</button>
+          <button type="button" class="pin-btn pin-btn-action" id="btnPinBackspace">⌫</button>
+        </div>
+
+        <button type="button" class="btn btn-primary" id="btnPinSubmit" style="width: 100%; padding: 12px; margin-top: 6px; font-size: 15px;">
+          🔓 Kirish
+        </button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- MODAL B: CAMERA SNAPSHOT MODAL (Mijozni rasmga olish) -->
+  <dialog id="cameraModal" closedby="any" aria-labelledby="cameraModalTitle">
+    <div class="modal-content" style="max-width: 420px;">
+      <div class="modal-header">
+        <h3 id="cameraModalTitle" class="modal-title">📷 Mijozni Suratga Olish</h3>
+        <button class="btn-close" id="btnCloseCameraModal" aria-label="Yopish">✕</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 14px;">
+        <div class="camera-container">
+          <video id="cameraVideo" autoplay playsinline muted></video>
+          <img id="cameraCapturedImg" style="display: none; width: 100%; height: 100%; object-fit: cover;">
+          <canvas id="cameraCanvas" style="display: none;"></canvas>
+          <div class="camera-guide-ring" id="cameraGuideRing"></div>
+        </div>
+
+        <div id="cameraStatusMsg" style="font-size: 12px; color: var(--text-muted); text-align: center;">
+          Kameraga qarang va yuzingizni aylanaga to'g'irlang
+        </div>
+
+        <div class="camera-actions-row">
+          <button type="button" class="btn btn-primary" id="btnSnapPhoto" style="padding: 12px 24px;">
+            📸 Suratga tushirish
+          </button>
+          <button type="button" class="btn btn-secondary" id="btnRetakePhoto" style="display: none; padding: 12px 18px;">
+            🔄 Qaytadan olish
+          </button>
+          <button type="button" class="btn btn-primary" id="btnSavePhoto" style="display: none; padding: 12px 24px;">
+            ✅ Ushbu suratni saqlash
+          </button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- MODAL 1: Voice Recording Assistant Dialog -->
+  <dialog id="voiceModal" closedby="any" aria-labelledby="voiceModalTitle">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="voiceModalTitle" class="modal-title">🎙️ Ovozli Yozish Assisti</h3>
+        <button class="btn-close" id="btnCloseVoiceModal" aria-label="Yopish">✕</button>
+      </div>
+
+      <div class="voice-assistant-body">
+        <div class="voice-lang-selector">
+          <button type="button" class="btn-lang-chip active" id="btnLangUz" data-lang="uz-UZ">🇺🇿 O'zbek tili</button>
+          <button type="button" class="btn-lang-chip" id="btnLangRu" data-lang="ru-RU">🇷🇺 Rus tili</button>
+        </div>
+
+        <div id="fileProtocolHint" style="display: none; font-size: 12px; color: var(--color-accent); background: var(--color-accent-light); border: 1px solid rgba(99,102,241,0.25); padding: 8px 12px; border-radius: var(--radius-md); text-align: center; width: 100%;">
+          💡 Mikrofon 100% to'liq va aniq ishlashi uchun brauzerda <a href="http://localhost:3030" style="color: var(--color-accent); font-weight: 700; text-decoration: underline;">http://localhost:3030</a> orqali kiring!
+        </div>
+
+        <div class="voice-wave-container">
+          <canvas id="audioVisualizer"></canvas>
+        </div>
+
+        <button class="voice-big-mic" id="voiceBigMic" aria-label="Mikrofonni yoqish yoki to'xtatish">
+          🎙️
+        </button>
+
+        <div id="voiceStatusLabel" class="voice-status-label">
+          Mikrofonni bosib gapiring yoki quyidagi misollarni bosing
+        </div>
+
+        <div id="voiceTranscriptPreview" class="voice-transcript-preview">
+          Ovozli xabar kutilmoqda...
+        </div>
+
+        <div style="display: flex; gap: 8px; width: 100%; justify-content: center;">
+          <button type="button" class="btn btn-primary" id="btnVoiceDone" style="display: none; padding: 10px 20px;">
+            ✅ Gapirib bo'ldim (Tasdiqlash)
+          </button>
+        </div>
+
+        <div class="voice-examples-title">Yoki 1 chertish bilan sinab ko'ring:</div>
+        <div class="voice-chips-list">
+          <button class="voice-test-chip" data-phrase="Alisher aka bugun 150 ming so'm nasiya oldi">
+            ⚡ "Alisher aka 150 ming nasiya oldi"
+          </button>
+          <button class="voice-test-chip" data-phrase="Jamshid usta 80 000 so'm qarzini to'ladi">
+            ⚡ "Jamshid usta 80 ming to'ladi"
+          </button>
+          <button class="voice-test-chip" data-phrase="58219 ga 45 ming so'mga payvandlash elektrod oldi">
+            ⚡ "#ID ga 45 ming nasiya yozing"
+          </button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- MODAL 2: Safety First Confirmation Dialog -->
+  <dialog id="confirmModal" closedby="any" aria-labelledby="confirmModalTitle">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="confirmModalTitle" class="modal-title">🛡️ Tasdiqlash (Safety-First)</h3>
+        <button class="btn-close" id="btnCloseConfirmModal" aria-label="Yopish">✕</button>
+      </div>
+
+      <p style="font-size: 13px; color: var(--text-muted); margin-top: -10px;">
+        Pul masalasida xato ketmasligi uchun quyidagi ma'lumotlarni tekshiring:
+      </p>
+
+      <form id="formConfirmTransaction" style="display: flex; flex-direction: column; gap: 14px;">
+        <div class="form-group">
+          <label class="form-label" for="confirmCustName">Mijoz Ismi</label>
+          <input type="text" id="confirmCustName" class="form-input" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="confirmTxType">Amal Turi</label>
+            <select id="confirmTxType" class="form-select">
+              <option value="DEBT">🔴 Nasiya berildi (Qarz)</option>
+              <option value="PAYMENT">🟢 To'lov qaytdi (Kirim)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="confirmAmount">Summa (so'm)</label>
+            <input type="number" id="confirmAmount" class="form-input" required min="1" step="any" placeholder="20 000">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="confirmDesc">Izoh / Mahsulot</label>
+          <input type="text" id="confirmDesc" class="form-input" placeholder="Masalan: sement, moy, oziq-ovqat">
+        </div>
+
+        <div class="form-group" style="flex-direction: row; align-items: center; gap: 10px; background: var(--bg-surface-subtle); padding: 10px 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+          <input type="checkbox" id="confirmAutoMarkPaid" style="width: 18px; height: 18px; accent-color: var(--color-primary); cursor: pointer;">
+          <label for="confirmAutoMarkPaid" style="font-size: 13px; cursor: pointer; color: var(--text-main); font-weight: 600;">
+            Ushbu summa darhol <strong>to'landi</strong> deb ham yozilsin
+          </label>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+          <button type="button" class="btn btn-secondary" id="btnConfirmCancel" style="flex: 1;">
+            ❌ Bekor qilish
+          </button>
+          <button type="submit" class="btn btn-primary" id="btnConfirmApprove" style="flex: 1.4;">
+            ✅ Ha, Daftarga yozilsin!
+          </button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- MODAL 3: Add Customer Dialog with Photo Options -->
+  <dialog id="addCustomerModal" closedby="any" aria-labelledby="addCustModalTitle">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="addCustModalTitle" class="modal-title">👤 Yangi Mijoz Qo'shish</h3>
+        <button class="btn-close" id="btnCloseAddCustModal" aria-label="Yopish">✕</button>
+      </div>
+
+      <form id="formAddCustomer" style="display: flex; flex-direction: column; gap: 14px;">
+        <div style="font-size: 13px; color: var(--color-accent); font-weight: 600; background: var(--color-accent-light); padding: 10px 14px; border-radius: var(--radius-md); border: 1px solid rgba(99, 102, 241, 0.2);">
+          ✨ Yangi mijozga avtomatik tarzda <strong>tasodifiy 5 xonali unikal ID (masalan: #58219)</strong> beriladi.
+        </div>
+
+        <!-- Optional Customer Photo Section -->
+        <div class="form-group">
+          <label class="form-label">Mijoz Surati (Ixtiyoriy)</label>
+          <div class="photo-uploader-box">
+            <div class="photo-preview-thumb" id="newCustPhotoThumb">
+              <span>👤</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px; flex: 1;">
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button type="button" class="btn btn-secondary" id="btnOpenAddCustCamera" style="font-size: 12px; padding: 6px 12px;">
+                  📷 Kamera (Suratga olish)
+                </button>
+                <label class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px; cursor: pointer;">
+                  📁 Fayl tanlash
+                  <input type="file" id="newCustPhotoFileInput" accept="image/*" style="display: none;">
+                </label>
+                <button type="button" class="btn-close" id="btnRemoveNewCustPhoto" style="display: none; width: 28px; height: 28px;" title="Suratni olib tashlash">
+                  ✕
+                </button>
+              </div>
+              <span style="font-size: 11px; color: var(--text-muted);">Mijozni chehrasidan eslab qolish uchun ixtiyoriy rasm</span>
+            </div>
+            <input type="hidden" id="newCustPhotoData">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="newCustName">Mijoz Ismi *</label>
+          <input type="text" id="newCustName" class="form-input" placeholder="Masalan: Dilshod aka" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="newCustId5">5 xonali ID raqami *</label>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="newCustId5" class="form-input" maxlength="5" placeholder="5 xonali ID (masalan: 68129)" inputmode="numeric" required style="font-weight: 700; letter-spacing: 2px;">
+            <button type="button" class="btn btn-secondary" id="btnGenRandomId" style="white-space: nowrap; font-size: 13px; font-weight: 600;">
+              🎲 Random ID
+            </button>
+          </div>
+          <span style="font-size: 11px; color: var(--text-muted);">Bu ID mijozga beriladi va Telegram botda (@qarzingnikor_bot) hisobini ko'rish uchun ishlatiladi.</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="newCustPhone">Telefon raqami (Eslatma jo'natish uchun)</label>
+          <input type="tel" id="newCustPhone" class="form-input" placeholder="+998 90 123 45 67">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="newCustNote">Qo'shimcha izoh / Manzil</label>
+          <input type="text" id="newCustNote" class="form-input" placeholder="Masalan: Chilonzor 9-kvartal, usta">
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="margin-top: 8px;">
+          Saqlash
+        </button>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- MODAL 4: Manual Add Transaction Modal -->
+  <dialog id="manualTxModal" closedby="any" aria-labelledby="manualTxModalTitle">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="manualTxModalTitle" class="modal-title">Amalni Yozish</h3>
+        <button class="btn-close" id="btnCloseManualTx" aria-label="Yopish">✕</button>
+      </div>
+
+      <form id="formManualTx" style="display: flex; flex-direction: column; gap: 14px;">
+        <input type="hidden" id="manualTxCustId">
+
+        <div class="form-group">
+          <label class="form-label">Mijoz</label>
+          <input type="text" id="manualTxCustName" class="form-input" disabled>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="manualTxType">Amal turi</label>
+            <select id="manualTxType" class="form-select">
+              <option value="DEBT">🔴 Nasiya (Qarz berildi)</option>
+              <option value="PAYMENT">🟢 To'lov (Pul qaytdi)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="manualTxAmount">Summa (so'm) *</label>
+            <input type="number" id="manualTxAmount" class="form-input" required min="1" step="any" placeholder="50 000">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="manualTxDesc">Izoh / Mahsulot nomi</label>
+          <input type="text" id="manualTxDesc" class="form-input" placeholder="Masalan: Shakar va yog'">
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="margin-top: 8px;">
+          Daftarga Kiritish
+        </button>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- Scripts -->
+  <script src="js/data.js?v=2.5"></script>
+  <script src="js/parser.js?v=2.5"></script>
+  <script src="js/audio.js?v=2.5"></script>
+  <script src="js/export.js?v=2.5"></script>
+  <script src="js/app.js?v=2.5"></script>
+  <script>
+    if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW reg error:', err));
+      });
+    }
+  </script>
+</body>
+</html>

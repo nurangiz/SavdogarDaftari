@@ -1,0 +1,224 @@
+/* ==========================================================================
+   SAVDOGAR DAFTARI — Responsive & Print Styles
+   Mobile-first polish and media queries
+   ========================================================================== */
+
+/* Mobile Bottom Navigation Bar (Shown on small screens) */
+.mobile-bottom-bar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .app-container {
+    padding: 12px 12px 90px;
+    gap: 16px;
+  }
+
+  .top-header {
+    padding: 12px 14px;
+    top: 6px;
+  }
+
+  .brand-logo {
+    width: 38px;
+    height: 38px;
+    font-size: 18px;
+  }
+
+  .brand-info h1 {
+    font-size: 16px;
+  }
+
+  .shop-status-text {
+    font-size: 11px;
+  }
+
+  .voice-hero-card {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 18px 16px;
+    gap: 16px;
+  }
+
+  .voice-hero-title {
+    font-size: 19px;
+  }
+
+  .voice-hero-cta {
+    width: 100%;
+  }
+
+  .btn-record {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 20px;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .metric-card {
+    padding: 14px;
+    gap: 8px;
+  }
+
+  .metric-value {
+    font-size: 20px;
+  }
+
+  .toolbar-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-box {
+    max-width: 100%;
+  }
+
+  .toolbar-actions {
+    justify-content: space-between;
+  }
+
+  .customer-sheet {
+    max-width: 100%;
+    border-left: none;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .nav-tabs {
+    display: none; /* Replaced by bottom bar on mobile */
+  }
+
+  .mobile-bottom-bar {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-surface);
+    border-top: 1px solid var(--border-color);
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(12px);
+    z-index: 45;
+    padding: 6px 10px calc(env(safe-area-inset-bottom, 8px) + 6px);
+    justify-content: space-around;
+  }
+
+  .mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: var(--radius-md);
+    transition: var(--transition-fast);
+  }
+
+  .mobile-nav-item.active {
+    color: var(--color-primary);
+  }
+
+  .mobile-nav-icon {
+    font-size: 20px;
+  }
+
+  /* Customer portal mobile adjustments */
+  .portal-hero-card {
+    padding: 24px 16px;
+  }
+
+  .id-search-form {
+    flex-direction: column;
+    border-radius: var(--radius-lg);
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .id-search-form input {
+    text-align: center;
+    font-size: 20px;
+    padding: 6px 0;
+  }
+
+  .id-search-form .btn {
+    width: 100%;
+  }
+
+  .pin-keypad {
+    max-width: 100%;
+  }
+
+  .camera-container {
+    width: 85vw;
+    max-width: 280px;
+  }
+
+  /* Floating mobile voice record button */
+  .mobile-float-mic {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    color: #ffffff;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    margin-top: -24px;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.5);
+    border: 3px solid var(--bg-surface);
+  }
+}
+
+/* Print / PDF Styles */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  body::before, body::after {
+    display: none !important;
+  }
+
+  .top-header,
+  .voice-hero-card,
+  .nav-tabs,
+  .toolbar-section,
+  .mobile-bottom-bar,
+  .btn,
+  .btn-card-action,
+  .theme-toggle-btn,
+  .icon-btn,
+  .toast-container {
+    display: none !important;
+  }
+
+  .app-container {
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .customers-container {
+    display: block !important;
+  }
+
+  .customer-card {
+    page-break-inside: avoid;
+    border: 1px solid #ccc !important;
+    margin-bottom: 12px !important;
+    box-shadow: none !important;
+  }
+}

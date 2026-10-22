@@ -1,0 +1,20 @@
+{
+  "name": "savdogar-daftari",
+  "version": "1.0.0",
+  "description": "O'zbekiston do'kondorlari va savdogarlari uchun ovozli nasiya va qarz boshqaruvi veb-ilovasi",
+  "main": "index.html",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "fintech",
+    "khatabook",
+    "debt-ledger",
+    "uzbekistan",
+    "voice-recognition",
+    "pwa"
+  ],
+  "author": "Antigravity Elite Team",
+  "license": "MIT"
+}
